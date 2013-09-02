@@ -118,8 +118,11 @@ class Client(object):
     def delete(self, path):
         self._send('DELETE', path, 204)
     def upload(self, local_path, remote_path):
-        with open(local_path, 'rb') as f:
-            self._send('PUT', remote_path, (201, 204), data=f.read())
+        if hasattr ( local_path, "read" ):
+            self._send('PUT', remote_path, (201, 204), data=local_path.read())
+        else:
+            with open(local_path, 'rb') as f:
+                self._send('PUT', remote_path, (201, 204), data=f.read())
     def download(self, remote_path, local_path):
         response = self._send('GET', remote_path, 200)
         with open(local_path, 'wb') as f:
